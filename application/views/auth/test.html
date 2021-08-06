@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Document</title>
+</head>
+<body>
+   
+   <button onclick="onClick()">Print</button>
+   <script src="https://cdn.jsdelivr.net/npm/recta/dist/recta.js"></script>
+   <script type="text/javascript">
+     var printer = new Recta('010203040506070809', '1811')
+   
+     function onClick () {
+       printer.open().then(function () {
+         printer.align('center')
+           .text('Hello World !!')
+           .bold(true)
+           .text('This is bold text')
+           .bold(false)
+           .underline(true)
+           .text('This is underline text')
+           .underline(false)
+           .barcode('UPC-A', '123456789012')
+           .cut()
+           .print()
+       })
+     }
+   </script>
+</body>
+</html>
