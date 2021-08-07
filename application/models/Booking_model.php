@@ -215,11 +215,12 @@ class Booking_model extends CI_model
         $jam = htmlspecialchars($this->input->post('jamPanahan'));
         $tanggal = htmlspecialchars($this->input->post('tanggalPanahan'));
         $arena_id = htmlspecialchars($this->input->post('arena_idPanahan'));
+        $jumlah = htmlspecialchars($this->input->post('jumlah'));
 
         $arena = $this->db->get_where('arena_panahan', ['id' => $arena_id])->row_array();
-        $cek = $this->db->get_where('booking', ['arena_id'=>$arena_id, 'tanggal'=>$tanggal, 'jenis_arena'=>'panah', 'jam'=>$jam])->num_rows();
+        $cek = $this->db->query("SELECT SUM(jumlah) as total FROM booking WHERE jenis_arena = 'panah' AND tanggal='$tanggal' AND jam = '$jam'")->row();
 
-        if(intval($arena['kapasitas_maks']) > $cek){
+        if($arena['kapasitas_maks'] >= ($cek->total + $jumlah)){
             // return [1];
             return [$cek, $arena['kapasitas_maks']];
         } else {
@@ -232,9 +233,10 @@ class Booking_model extends CI_model
     {
         $cek = $this->getPanahan();
         
-        if(count($cek) < 0){
+        if(count($cek) <= 0){
             return 0;
         } else {
+            
             $data = [
                 'no_booking' => noBooking(),
                 'pelanggan_id' => htmlspecialchars($this->input->post('pelanggan_id')),
@@ -248,7 +250,8 @@ class Booking_model extends CI_model
                 'perusahaan_id' => $this->session->userdata('perusahaan_id'),
                 'created' => date('Y-m-d'),
                 'user_created' => $this->session->userdata('id'),
-                'is_booking' => 0
+                'is_booking' => 0,
+                'jumlah' => htmlspecialchars($this->input->post('jumlah')),
             ];
 
             $this->db->insert('booking', $data);

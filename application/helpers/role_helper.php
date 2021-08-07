@@ -259,6 +259,30 @@ function qr_code($json)
    $ci->ciqrcode->generate($params); // fungsi untuk generate QR CODE
 }
 
+function qr_code2($json)
+{  
+   $ci = get_instance();
+   $ci->load->library('ciqrcode'); //pemanggilan library QR CODE
+ 
+   $config['cacheable']    = true; //boolean, the default is true
+   $config['cachedir']     = './assets/'; //string, the default is application/cache/
+   $config['errorlog']     = './assets/'; //string, the default is application/logs/
+   $config['imagedir']     = './assets/qr_code/'; //direktori penyimpanan qr code
+   $config['quality']      = true; //boolean, the default is true
+   $config['size']         = '1024'; //interger, the default is 1024
+   $config['black']        = array(224,255,255); // array, default is array(255,255,255)
+   $config['white']        = array(70,130,180); // array, default is array(0,0,0)
+   $ci->ciqrcode->initialize($config);
+
+   $image_name=$json['qr_code'].'-'.$json['id_barang'].'-'.$json['uniq_code'].'.png'; //buat name dari qr code sesuai dengan nim
+
+   $params['data'] = json_encode($json); //data yang akan di jadikan QR CODE
+   $params['level'] = 'H'; //H=High
+   $params['size'] = 10;
+   $params['savename'] = FCPATH.$config['imagedir'].$image_name; //simpan image QR CODE ke folder assets/images/
+   $ci->ciqrcode->generate($params); // fungsi untuk generate QR CODE
+}
+
 function send_mail($data)
 {
    $ci = get_instance();

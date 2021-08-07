@@ -157,11 +157,19 @@ class Booking extends CI_Controller {
     public function saveManualPanahan()
     {   
         $data = $this->Booking_model->saveManualPanahan();
-        if($data == 1){
-            $this->session->set_flashdata('sukses', 'Data Berhasil Simpan');
-        } else {
-            $this->session->set_flashdata('gagal', 'Arena Sudah Penuh');
-        }
-        redirect('booking/manual');
+
+        echo json_encode($data);
+        // if($data == 1){
+        //     $this->session->set_flashdata('sukses', 'Data Berhasil Simpan');
+        // } else {
+        //     $this->session->set_flashdata('gagal', 'Arena Sudah Penuh');
+        // }
+        // redirect('booking/manual');
+    }
+
+    public function check(){
+        $data = 1;
+
+        echo json_encode($data);
     }
 }

@@ -10,23 +10,36 @@
          </div>
 
          <form action="<?=base_url('scan/save')?>" method="post">
+            <div class="row justify-content-center">
+               <div  id="scan-row" class="col-sm-6 mb-3">
+                  <div class="white shadow r-15">
+                     <div class="card-body">
+                     <div class="alert alert-primary" id="head" role="alert">
+                        
+                     </div>
+                        <div id="qr-reader"></div>
+                        <div id="qr-reader-results"></div>
+                  </div>
+               </div>
+            </div>
             <div class="row">
                <div class="col-sm-6 mb-3">
                   <div class="white shadow r-15">
                      <div class="card-body">
-
-                        <div id="qr-reader"></div>
-                        <div id="qr-reader-results"></div>
-
                         <div class="form-group">
                            <label for="invoice">No Invoice</label>
                            <input type="text" class="form-control" placeholder="Masukan No Invoice" id="invoice" name="invoice" required>
                         </div>
 
                         <hr>
+                        <div class="form-group">
+                           <label for="nama">Jasa Hasil Scan</label>
+                           <input type="text" class="form-control" placeholder="Nama Jasa Hasil Scan" id="item" name="item" required readonly>
+                           <input type="hidden" class="form-control" placeholder="Nama Jasa Hasil Scan" id="id_barang" name="id_barang" required readonly>
+                        </div>
                         <label for="invoice">Detail Invoice</label>
                         <div class="table-responsive">
-                           <table id="example" class="table table-bordered table-striped table-hover" width="100%">
+                           <table  id="example" class="table table-bordered table-striped table-hover" width="100%">
                               <thead>
                                  <tr>
                                     <th>No</th>
@@ -43,17 +56,15 @@
                   </div>
                </div>
 
-               <div class="col-sm-6">
+               <div class="col-sm-6 mb-3">
                   <div class="white shadow r-15">
                      <div class="card-body">
-
-                     <div id="qr-reader2"></div>
-                     <div id="qr-reader-results2"></div>
 
                         <div class="form-group">
                            <label for="nip">NIP Karyawan</label>
                            <input type="text" class="form-control" placeholder="Masukan NIP Karyawan" id="nip" name="nip" required>
                            <input type="hidden" class="form-control" placeholder="Masukan NIP Karyawan" id="karyawan_id" name="karyawan_id" required>
+                           <input type="hidden" class="form-control" placeholder="Masukan NIP Karyawan" id="code" name="code" required>
                         </div>
 
                         <div class="form-group">
@@ -64,10 +75,20 @@
                      </div>
                   </div>
                </div>
+               <div style="display:none;" id="submit" class="col-sm-12">
+                  <div class="white shadow r-15">
+                     <div class="card-body">
+                        <div class="text-right">
+                           <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                        </form>
+                     </div>
+                  </div>
+               </div>
 
             </div>
 
-            <div class="row">
+            <!-- <div class="row">
                <div class="col-sm-12">
                   <div class="white shadow r-15">
                      <div class="card-body">
@@ -78,7 +99,7 @@
                      </div>
                   </div>
                </div>
-            </div>
+            </div> -->
 
         </div>
     </div>
@@ -103,6 +124,11 @@
 <script>
 
 $(document).ready(function(){
+
+   let a = 1;
+   document.getElementById("head").innerHTML = "SCAN INVOICE"
+   
+   
    function docReady(fn) {
       // see if DOM is already available
       if (document.readyState === "complete"
@@ -124,8 +150,16 @@ $(document).ready(function(){
                // Handle on success condition with the decoded message.
                console.log(`Scan result ${decodedText}`, decodedResult);
                var obj = JSON.parse(decodedText);
-               document.getElementById("invoice").value = obj.qr_code;
-               show_table(obj.qr_code);
+               console.log(a);
+               if(a == 1){
+                  document.getElementById("invoice").value = obj.qr_code;
+                  show_table(obj);
+               }
+
+               if(a == 2){
+                  document.getElementById("nip").value = obj.qr_code;
+                  getNip(obj.qr_code);
+               }
          }
       }
 
@@ -134,7 +168,7 @@ $(document).ready(function(){
       html5QrcodeScanner.render(onScanSuccess);
       document.getElementById("qr-reader__dashboard_section_swaplink").style.visibility = "hidden";
       var x = document.getElementById("qr-reader");
-      x.children[0].children[0].innerHTML = "Scan Invoice";
+      x.children[0].children[0].innerHTML = "Scan QRcode";
    });
 
    var table = $("#example").DataTable();
@@ -144,30 +178,63 @@ $(document).ready(function(){
          url:"<?= base_url('scan/getBarangDetail')?>",
          type:"POST",
          dataType: 'json',
-         data:{invoice:invoice},
+         data:invoice,
          success:function(data){
-            console.log(data);
+            
             table.clear();
-            if(data.length == 0){
-               Swal.fire({
-                  position: 'center',
-                  icon: 'error',
-                  title: 'Error',
-                  text: 'Data Tidak Ditemukan',
-                  showConfirmButton: false,
-                  timer: 2500
-               });
+            if(data.hasil.length == 0){
+               if(data.status == 0){
+                  Swal.fire({
+                     position: 'center',
+                     icon: 'error',
+                     title: 'Error',
+                     text: 'Data Tidak Ditemukan',
+                     showConfirmButton: false,
+                     timer: 2500
+                  });
+               }
+               
+               if(data.status == 1){
+                  Swal.fire({
+                     position: 'center',
+                     icon: 'error',
+                     title: 'Error',
+                     text: 'Invoice Sudah Digunakan',
+                     showConfirmButton: false,
+                     timer: 2500
+                  });
+               }
+               
                
                $("#invoice").val('');
             } else {
+               a = 2;
+               document.getElementById("head").innerHTML = "SCAN NIP KARYAWAN"
+               Swal.fire({
+                  position: 'center',
+                  icon: 'success',
+                  title: 'Sukses',
+                  text: 'Data Ditemukan',
+                  showConfirmButton: false,
+                  timer: 2500
+               });
                var no = 1;
-               $.each(data, function (i, key) {
+               $.each(data.hasil, function (i, key) {
 
-                  var nama = data[i].item;
-                  nama += `<input type="hidden" class="form-control" id="barang_jual_id`+data[i].barang_jual_id+`" name="barang_jual_id[]" required value=`+data[i].barang_jual_id+` />`;
+                  var nama = data.hasil[i].item;
+                  nama += `<input type="hidden" class="form-control" id="barang_jual_id`+data.hasil[i].barang_jual_id+`" name="barang_jual_id[]" required value=`+data.hasil[i].barang_jual_id+` />`;
 
-                  var qty = data[i].quantity;
-                  qty += `<input type="hidden" class="form-control" id="quantity`+data[i].quantity+`" name="quantity[]" required value=`+data[i].quantity+` />`;
+                  var qty = data.hasil[i].quantity;
+                  qty += `<input type="hidden" class="form-control" id="quantity`+data.hasil[i].quantity+`" name="quantity[]" required value=`+data.hasil[i].quantity+` />`;
+
+                  qty += `<input type="hidden" class="form-control" id="jenis_barang`+data.hasil[i].jenis_barang+`" name="jenis_barang[]" required value=`+data.hasil[i].jenis_barang+` />`;
+
+                  $('#code').val(invoice.uniq_code);
+
+                  if(data.hasil[i].id == invoice.id_barang){
+                     $('#id_barang').val(data.hasil[i].id);
+                     $('#item').val(data.hasil[i].item);
+                  }
 
                   table.row.add([
                      no++,
@@ -241,6 +308,17 @@ $(document).ready(function(){
                $('#karyawan_id').val('');
                $('#nama').val('');
             } else {
+               a = 1;
+               document.getElementById("scan-row").style.display = "none";
+               document.getElementById("submit").style.display = "block";
+               Swal.fire({
+                  position: 'center',
+                  icon: 'success',
+                  title: 'Sukses',
+                  text: 'Data Karyawan Ditemukan',
+                  showConfirmButton: false,
+                  timer: 2500
+               });
                $('#karyawan_id').val(data.id);
                $('#nama').val(data.nama);
             }

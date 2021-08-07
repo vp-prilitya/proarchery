@@ -82,7 +82,7 @@
                            <td>Kasir Penjualan</td>
                            <td>
                               <a href="<?=base_url('validasi/edit/1/')?><?=$db['id']?>" class="btn btn-warning btn-xs"><i class="icon-edit"></i> Cek Data</a>
-                               <a href="<?=base_url('validasi/delete/1')?><?=$db['id']?>" class="btn btn-danger btn-xs tombol-hapus" ><i class="icon-delete_forever"></i> Hapus</a> 
+                               <a href="<?=base_url('validasi/delete/1/')?><?=$db['id']?>" class="btn btn-danger btn-xs tombol-hapus" ><i class="icon-delete_forever"></i> Hapus</a> 
                            </td>
                         </tr>
                      <?php endforeach?>

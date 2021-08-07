@@ -30,7 +30,7 @@
                      <div class="tab-content">
                         <div class="tab-pane fade show active" id="w3-tab1" role="tabpanel" aria-labelledby="w3-tab1">
 
-                           <form action="<?=base_url('booking/saveManual')?>" method="post">
+                           <form action="<?=base_url('booking/saveManual')?>"  method="post">
                            <div class="form-group">
                               <label for="arena_id">Arena</label>
                               <select class="custom-select select2" required name="arena_id" id="arena_id">
@@ -88,7 +88,7 @@
 
                         <div class="tab-pane fade" id="w3-tab2" role="tabpanel" aria-labelledby="w3-tab2">
 
-                           <form action="<?=base_url('booking/saveManualPanahan')?>" method="post">
+                           <form onsubmit="return validationPanah()" method="post">
                            <div class="form-group">
                               <label for="arena_idPanahan">Arena</label>
                               <select class="custom-select select2" required name="arena_idPanahan" id="arena_idPanahan">
@@ -111,7 +111,7 @@
                               </select>
                            </div>
 
-                           <div class="form-group">
+                           <!-- <div class="form-group">
                               <label for="pelatihPanahan">Pelatih</label>
                               <select class="custom-select select2" required name="pelatihPanahan" id="pelatihPanahan">
                                  <option value="" disabled selected>Pilih Pelatih</option>
@@ -119,11 +119,16 @@
                                     <option value="<?=$db['id']?>"><?=$db['nama']?></option>
                                  <?php endforeach?>
                               </select>
+                           </div> -->
+
+                           <div class="form-group">
+                              <label for="tanggalPanahan">Jumlah Booking Orang</label>
+                              <input type="number" class="form-control" name="jumlah" id="jumlah" />
                            </div>
 
                            <div class="form-group">
                               <label for="pelanggan_id">Pelanggan</label>
-                              <select class="custom-select select2" required name="pelanggan_id" id="pelanggan_id">
+                              <select class="custom-select select2" required name="pelanggan_idPanah" id="pelanggan_idPanah">
                                  <option value="" disabled selected>Pilih Pelanggan</option>
                                  <?php foreach($pelanggan as $db):?>
                                     <option value="<?=$db['id']?>"><?=$db['nama']?></option>
@@ -132,7 +137,7 @@
                            </div>
                               
                               <a href="<?=base_url('booking/manual')?>" class="btn btn-danger mr-2">Batal</a>
-                              <button type="submit" class="btn btn-primary">Simpan</button>
+                              <button type="submit" class="btn btn-primary" id="btn-panah">Simpan</button>
                            </form>
                         </div>
                      </div>
@@ -347,5 +352,100 @@ $(document).ready(function(){
       }
    });
 
+   $("#btn-panah").click(function(e){
+        e.preventDefault();
+        var arena_idPanahan = $('#arena_idPanahan').val(); 
+        var tanggalPanahan = $('#tanggalPanahan').val(); 
+        var jamPanahan = $('#jamPanahan').val(); 
+        var jumlah = $('#jumlah').val();
+        var idpel = $('#pelanggan_idPanah').val(); 
+
+        if(arena_idPanahan == null){
+            Swal.fire({
+               position: 'center',
+               icon: 'error',
+               title: 'Gagal',
+               text: 'Arena harus di isi',
+               showConfirmButton: false,
+               timer: 2500
+            });
+
+         return false;
+        }
+
+        if(tanggalPanahan == null){
+            Swal.fire({
+               position: 'center',
+               icon: 'error',
+               title: 'Gagal',
+               text: 'Tanggal harus di isi',
+               showConfirmButton: false,
+               timer: 2500
+            });
+         return false;
+        }
+
+         if(jamPanahan == null){
+            Swal.fire({
+               position: 'center',
+               icon: 'error',
+               title: 'Gagal',
+               text: 'Jam harus di isi',
+               showConfirmButton: false,
+               timer: 2500
+         });
+         return false;
+        }
+
+         if(jumlah == 0){
+            Swal.fire({
+               position: 'center',
+               icon: 'error',
+               title: 'Gagal',
+               text: 'Jumlah Booking harus di isi',
+               showConfirmButton: false,
+               timer: 2500
+            });
+
+         return false;
+        }
+
+        if(idpel == null){
+            Swal.fire({
+               position: 'center',
+               icon: 'error',
+               title: 'Gagal',
+               text: 'Pelanggan harus di isi',
+               showConfirmButton: false,
+               timer: 2500
+            });
+
+         return false;
+        }
+
+         
+
+        $.ajax({
+            url:"<?= base_url('booking/saveManualPanahan')?>",
+            type:"POST",
+            dataType: 'json',
+            data:{arena_idPanahan:arena_idPanahan, tanggalPanahan:tanggalPanahan, jamPanahan:jamPanahan,jumlah : jumlah, pelanggan_idPanah : idpel},
+            success:function(data){
+               if(data == 1){
+                  window.location.href = "<?= base_url('booking/manual')?>";
+               }else{
+                  Swal.fire({
+                     position: 'center',
+                     icon: 'error',
+                     title: 'Gagal',
+                     text: 'Jumlah Booking anda sudah melebihi kapasitas maximun untuk jam ' + jamPanahan,
+                     showConfirmButton: false,
+                     timer: 2500
+                  });
+               }
+            }
+         });
+   })
+   
 });
 </script>

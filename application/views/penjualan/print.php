@@ -258,17 +258,46 @@
                             <th><H1><p style="font-size:60px">Kembalian</H1></th>
                             <td><H1><p style="font-size:60px">IDR <?=number_format(($data[0]['total_bayar']-$data[0]['total_gross']),0,'','.')??0?></H1></td>
                           </tr>
-                          
-                          <tr>
-                            <!-- <th><H1>QR Code</th> -->
-                            <td><img src="<?=base_url('assets/qr_code/')?><?=$data[0]['no_faktur']?>.png" alt="" width=500 class=""></td>
-                          </tr>
+                         
                           
                           </tbody>
                         </table>
                       </div>
+                      <br>
+                      <br>
+                      <br>
+                      <br>
+                      <br>
+                      <br>
+                      <br>
+                      <br>
+                      <br>
+                      <br>
+                      <br>
+                      <br>
                     </div>
-                              
+                    
+                    <div class="row justify-content-center">
+                    <?php $i=1; foreach($data as $dd) :?>
+                      <?php if($dd['jenis_barang'] == 'jasa') { ?>
+                        <?php for($i=0; $i<$dd['quantity']; $i++) { ?>
+                        <div class="col-sm-12 ">
+                          <h1 class="text-center"><?= $dd['item'] ?> </h1>  
+                          <h2 class="text-center">QR <?= $i + 1 ?></h2> 
+                          <div class="row justify-content-center">
+                            <img src="<?=base_url('assets/qr_code/')?><?=$data[0]['no_faktur']?>-<?=$dd['id']?>-<?= $i ?>.png" alt="" width=500 class="">
+                          </div> 
+                        </div> 
+                        <br>
+                        <br>
+                    ______________________________________________________________________________________________________________________________________________________________________________
+                          <br>
+                          <br>
+                          <br>
+                        <?php } ?>
+                      <?php } ?>  
+                    <?php endforeach ?>          
+                    </div>
                               
                               
                   <!-- /.row -->

@@ -31,6 +31,7 @@ class Scan extends CI_Controller {
     public function getBarangDetail()
     {
         $data = $this->Scan_model->getBarangDetail();
+        
         echo json_encode($data);
     }
 

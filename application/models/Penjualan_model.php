@@ -300,6 +300,22 @@ class Penjualan_model extends CI_model
 
         count($insert)>0? $this->db->insert_batch('penjualan_detail', $insert) : null;
 
+        foreach($insert as $dt){
+            $this->db->select('*');
+            $this->db->where('id', $dt['barang_jual_id']);
+            $query = $this->db->get('barang_jual')->row();
+            if($query->jenis_barang == 'jasa'){
+                for($i=0; $i<$dt['quantity']; $i++){
+                    $json = [
+                        'qr_code' => $nodaktur,
+                        'uniq_code'=> $i,
+                        'id_barang'=> $dt['barang_jual_id']
+                    ];
+                    qr_code2($json);
+                }
+            }
+        }
+
         // JIKA MEMBER
         if($pelanggan_id != 0){
             $this->kirimInvoice($penjualan_id, 'member');
@@ -433,7 +449,7 @@ class Penjualan_model extends CI_model
                                     c.alamat, 
                                     c.contact, 
                                     c.email, 
-                                    d.nama as item, d.harga_jual, d.satuan,
+                                    d.nama as item, d.harga_jual, d.satuan, d.id, d.jenis_barang,
                                     GROUP_CONCAT(
                                     CONCAT(g.nama, ' @ ', e.quantity, g.satuan) SEPARATOR '<br>'
                                     ) as paket, 
