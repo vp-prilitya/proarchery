@@ -429,7 +429,7 @@ $(document).ready(function(){
             url:"<?= base_url('booking/saveManualPanahan')?>",
             type:"POST",
             dataType: 'json',
-            data:{arena_idPanahan:arena_idPanahan, tanggalPanahan:tanggalPanahan, jamPanahan:jamPanahan,jumlah : jumlah, pelanggan_idPanah : idpel},
+            data:{arena_idPanahan:arena_idPanahan, tanggalPanahan:tanggalPanahan, jamPanahan:jamPanahan,jumlah : jumlah, pelanggan_id : idpel},
             success:function(data){
                if(data == 1){
                   window.location.href = "<?= base_url('booking/manual')?>";
